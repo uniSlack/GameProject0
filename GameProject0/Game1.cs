@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace GameProject0
 {
@@ -15,6 +16,9 @@ namespace GameProject0
         private Texture2D bronzeKnight;
         private Texture2D darkRanger;
 
+        private ArrowSprite[] arrows;
+        private Random r;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -24,7 +28,22 @@ namespace GameProject0
 
         protected override void Initialize()
         {
-            
+            arrows = new ArrowSprite[]
+            {
+                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 100), Fired = true },
+                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 50)},
+                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 150) },
+                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 200) },
+                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 250) },
+                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 100)},
+                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 50)},
+                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 150) },
+                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 200) },
+                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 250) }
+                //new ArrowSprite(){Position = new Vector2(200, 200), Fired = true }
+            };
+
+            r = new Random();
 
             base.Initialize();
         }
@@ -37,6 +56,8 @@ namespace GameProject0
             silkScreen = Content.Load<SpriteFont>("SilkScreen");
             bronzeKnight = Content.Load<Texture2D>("BronzeKnight");
             darkRanger = Content.Load<Texture2D>("DarkRanger");
+
+            foreach (var arrow in arrows) arrow.LoadContent(Content);
         }
 
         protected override void Update(GameTime gameTime)
@@ -45,6 +66,10 @@ namespace GameProject0
                 Exit();
 
             // TODO: Add your update logic here
+            foreach(var arrow in arrows)
+            {
+                arrow.Update(gameTime, r, GraphicsDevice.Viewport.Width);
+            }
 
             base.Update(gameTime);
         }
@@ -69,6 +94,8 @@ namespace GameProject0
                 new Rectangle(0, 0, 32, 32), Color.White, 0, new Vector2(0,0), 2, SpriteEffects.FlipHorizontally, 0);
 
             spriteBatch.DrawString(silkScreen, "Exit with Escape Key", new Vector2(0, 0), Color.White, 0, new Vector2(0, 0), .25f, SpriteEffects.None, 0);
+
+            foreach (var arrow in arrows) arrow.Draw(gameTime, spriteBatch);
 
             spriteBatch.End();
 
