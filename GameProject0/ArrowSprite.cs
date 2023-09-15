@@ -12,6 +12,7 @@ namespace GameProject0
 {
     public class ArrowSprite
     {
+
         private Texture2D texture;
         public Vector2 Position { get; set; }
 
@@ -25,11 +26,16 @@ namespace GameProject0
         private BoundingRectangle bounds; 
         public BoundingRectangle Bounds => bounds;
 
-        public ArrowSprite(Vector2 position)
+        public ArrowSprite()
         {
-            Position = position;
-            bounds = new BoundingRectangle(position - new Vector2(16, 10), 32, 20); // loose as to be a bit easy
+            Position = new Vector2(10000,10000);
+            bounds = new BoundingRectangle(Position - new Vector2(16, 10), 32, 20); // loose as to be a bit easy
         }
+        //public ArrowSprite(Vector2 position)
+        //{
+        //    Position = position;
+        //    bounds = new BoundingRectangle(position - new Vector2(16, 10), 32, 20); // loose as to be a bit easy
+        //}
 
         public void LoadContent(ContentManager content)
         {
@@ -56,6 +62,7 @@ namespace GameProject0
                     if (r.NextDouble() < .02)
                     {
                         animationFrame = r.Next(7);
+                        Position = new Vector2(width, r.Next(50, 250));
                         Fired = true;
                     }
                 }
@@ -77,7 +84,18 @@ namespace GameProject0
             }
 
             var source = new Rectangle((animationFrame * 64) + 64, 64 * 3, 64, 64);
-            spriteBatch.Draw(texture, Position, source, Color.White, 0, new Vector2(0,0), 1, SpriteEffects.FlipHorizontally, 0);
+            if (Fired)
+            {
+                spriteBatch.Draw(texture, Position, source, Color.White, 0, new Vector2(0, 0), 1, SpriteEffects.FlipHorizontally, 0);
+            }
+        }
+
+        public void Blocked()
+        {
+            Fired = false;
+            Position = new Vector2(10000, 10000);
+            bounds.X = Position.X - 16;
+            bounds.Y = Position.Y - 10;
         }
     }
 }

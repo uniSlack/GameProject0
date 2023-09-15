@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using GameProject0.Collisions;
+using Microsoft.Xna.Framework.Input;
 
 namespace GameProject0
 {
@@ -12,6 +13,7 @@ namespace GameProject0
 
         private BoundingRectangle bounds;
         public BoundingRectangle Bounds => bounds;
+        private KeyboardState keyboardState;
 
         public Shield(Vector2 position)
         {
@@ -26,7 +28,11 @@ namespace GameProject0
 
         public void Update(GameTime gameTime)
         {
-            
+            keyboardState = Keyboard.GetState();
+            if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W)) Position += new Vector2(0, -2);
+            if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S)) Position += new Vector2(0, 2);
+            //bounds.X = Position.X - 32;
+            bounds.Y = Position.Y - 16;
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)

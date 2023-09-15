@@ -34,16 +34,26 @@ namespace GameProject0
         {
             arrows = new ArrowSprite[]
             {
-                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 100)),
-                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 50)),
-                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 150)),
-                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 200)),
-                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 250)),
-                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 100)),
-                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 50)),
-                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 200)),
-                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 250))
+                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 100)),
+                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 50)),
+                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 150)),
+                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 200)),
+                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 250)),
+                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 100)),
+                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 50)),
+                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 200)),
+                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 250))
                 //new ArrowSprite(){Position = new Vector2(200, 200), Fired = true }
+                new ArrowSprite(),
+                new ArrowSprite(),
+                new ArrowSprite(),
+                new ArrowSprite(),
+                new ArrowSprite(),
+                new ArrowSprite(),
+                new ArrowSprite(),
+                new ArrowSprite(),
+                new ArrowSprite(),
+                new ArrowSprite()
             };
 
             shield = new Shield(new Vector2(100,100));
@@ -82,6 +92,7 @@ namespace GameProject0
                 if (arrow.Bounds.CollidesWith(shield.Bounds))
                 {
                     score += 100;
+                    arrow.Blocked();
                 }
             }
 
