@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Threading.Tasks.Sources;
 
 namespace GameProject0
 {
@@ -17,7 +18,10 @@ namespace GameProject0
         private Texture2D darkRanger;
 
         private ArrowSprite[] arrows;
+        private Shield shield;
         private Random r;
+
+        private int score = 0;
 
         public Game1()
         {
@@ -30,18 +34,19 @@ namespace GameProject0
         {
             arrows = new ArrowSprite[]
             {
-                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 100), Fired = true },
-                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 50)},
-                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 150) },
-                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 200) },
-                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 250) },
-                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 100)},
-                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 50)},
-                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 150) },
-                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 200) },
-                new ArrowSprite(){Position = new Vector2(GraphicsDevice.Viewport.Width, 250) }
+                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 100)),
+                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 50)),
+                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 150)),
+                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 200)),
+                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 250)),
+                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 100)),
+                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 50)),
+                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 200)),
+                new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 250))
                 //new ArrowSprite(){Position = new Vector2(200, 200), Fired = true }
             };
+
+            shield = new Shield(new Vector2(100,100));
 
             r = new Random();
 
@@ -58,6 +63,7 @@ namespace GameProject0
             darkRanger = Content.Load<Texture2D>("DarkRanger");
 
             foreach (var arrow in arrows) arrow.LoadContent(Content);
+            shield.LoadContent(Content);
         }
 
         protected override void Update(GameTime gameTime)
@@ -70,6 +76,16 @@ namespace GameProject0
             {
                 arrow.Update(gameTime, r, GraphicsDevice.Viewport.Width);
             }
+
+            foreach (var arrow in arrows)
+            {
+                if (arrow.Bounds.CollidesWith(shield.Bounds))
+                {
+                    score += 100;
+                }
+            }
+
+            shield.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -94,8 +110,11 @@ namespace GameProject0
                 new Rectangle(0, 0, 32, 32), Color.White, 0, new Vector2(0,0), 2, SpriteEffects.FlipHorizontally, 0);
 
             spriteBatch.DrawString(silkScreen, "Exit with Escape Key", new Vector2(0, 0), Color.White, 0, new Vector2(0, 0), .25f, SpriteEffects.None, 0);
+            spriteBatch.DrawString(silkScreen, $"Score: {score}", new Vector2(0, 20), Color.White, 0, new Vector2(0, 0), .5f, SpriteEffects.None, 0);
 
             foreach (var arrow in arrows) arrow.Draw(gameTime, spriteBatch);
+
+            shield.Draw(gameTime, spriteBatch);
 
             spriteBatch.End();
 

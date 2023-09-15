@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
-using GameProject0.Collisions;
 
 namespace GameProject0
 {
@@ -22,15 +21,6 @@ namespace GameProject0
 
         public bool Fired { get; set; }
 
-        private BoundingRectangle bounds; 
-        public BoundingRectangle Bounds => bounds;
-
-        public ArrowSprite(Vector2 position)
-        {
-            Position = position;
-            bounds = new BoundingRectangle(position - new Vector2(16, 10), 32, 20); // loose as to be a bit easy
-        }
-
         public void LoadContent(ContentManager content)
         {
             texture = content.Load<Texture2D>("WEAPON_arrow");
@@ -45,7 +35,7 @@ namespace GameProject0
                 if (Fired)
                 {
                     Position += new Vector2(-1, 0) * 500 * (float)gameTime.ElapsedGameTime.TotalSeconds;
-                    if (Position.X < -64) 
+                    if (Position.X < -64)
                     {
                         Fired = false;
                         Position = new Vector2(width, Position.Y);
@@ -61,8 +51,6 @@ namespace GameProject0
                 }
                 movementTimer -= .1;
             }
-            bounds.X = Position.X - 16;
-            bounds.Y = Position.Y - 10;
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
@@ -77,7 +65,7 @@ namespace GameProject0
             }
 
             var source = new Rectangle((animationFrame * 64) + 64, 64 * 3, 64, 64);
-            spriteBatch.Draw(texture, Position, source, Color.White, 0, new Vector2(0,0), 1, SpriteEffects.FlipHorizontally, 0);
+            spriteBatch.Draw(texture, Position, source, Color.White, 0, new Vector2(0, 0), 1, SpriteEffects.FlipHorizontally, 0);
         }
     }
 }
