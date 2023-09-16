@@ -2,7 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks.Sources;
+
 
 namespace GameProject0
 {
@@ -22,6 +24,8 @@ namespace GameProject0
         private Random r;
 
         private int score = 0;
+        private int health = 100;
+        private float arrowSpeed = 1;
 
         public Game1()
         {
@@ -34,16 +38,6 @@ namespace GameProject0
         {
             arrows = new ArrowSprite[]
             {
-                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 100)),
-                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 50)),
-                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 150)),
-                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 200)),
-                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 250)),
-                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 100)),
-                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 50)),
-                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 200)),
-                //new ArrowSprite(new Vector2(GraphicsDevice.Viewport.Width, 250))
-                //new ArrowSprite(){Position = new Vector2(200, 200), Fired = true }
                 new ArrowSprite(),
                 new ArrowSprite(),
                 new ArrowSprite(),
@@ -81,14 +75,26 @@ namespace GameProject0
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            if(health <= 0)
+            {
+                Exit();
+                System.Windows.Forms.DialogResult result = System.Windows.Forms.MessageBox.Show("Game Over!", $"Your health reached zero!\nScore: {score}");
+                //if (result == System.Windows.Forms.DialogResult.Yes)
+            }
+
             // TODO: Add your update logic here
             foreach(var arrow in arrows)
             {
-                arrow.Update(gameTime, r, GraphicsDevice.Viewport.Width);
+                arrow.Update(gameTime, r, GraphicsDevice.Viewport.Width, arrowSpeed);
             }
 
             foreach (var arrow in arrows)
             {
+                if (arrow.Position.X < 0)
+                {
+                    health -= 10;
+                    arrow.Blocked();
+                }
                 if (arrow.Bounds.CollidesWith(shield.Bounds))
                 {
                     score += 100;
@@ -97,6 +103,8 @@ namespace GameProject0
             }
 
             shield.Update(gameTime);
+
+            arrowSpeed += (float)gameTime.ElapsedGameTime.TotalSeconds / 500;
 
             base.Update(gameTime);
         }
@@ -120,8 +128,10 @@ namespace GameProject0
             spriteBatch.Draw(darkRanger, new Vector2(GraphicsDevice.Viewport.Width - 100, 305), 
                 new Rectangle(0, 0, 32, 32), Color.White, 0, new Vector2(0,0), 2, SpriteEffects.FlipHorizontally, 0);
 
-            spriteBatch.DrawString(silkScreen, "Exit with Escape Key", new Vector2(0, 0), Color.White, 0, new Vector2(0, 0), .25f, SpriteEffects.None, 0);
+            spriteBatch.DrawString(silkScreen, "Exit with Escape Key", new Vector2(GraphicsDevice.Viewport.Width - 180, 0), Color.White, 0, new Vector2(0, 0), .25f, SpriteEffects.None, 0);
             spriteBatch.DrawString(silkScreen, $"Score: {score}", new Vector2(0, 20), Color.White, 0, new Vector2(0, 0), .5f, SpriteEffects.None, 0);
+            spriteBatch.DrawString(silkScreen, $"health: {health}", new Vector2(0, 0), Color.White, 0, new Vector2(0, 0), .5f, SpriteEffects.None, 0);
+            spriteBatch.DrawString(silkScreen, String.Format("speed: {0:0.000}", arrowSpeed, 2), new Vector2((GraphicsDevice.Viewport.Width/2) - 50, 0), Color.White, 0, new Vector2(0, 0), .5f, SpriteEffects.None, 0);
 
             foreach (var arrow in arrows) arrow.Draw(gameTime, spriteBatch);
 

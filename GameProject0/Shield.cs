@@ -29,8 +29,8 @@ namespace GameProject0
         public void Update(GameTime gameTime)
         {
             keyboardState = Keyboard.GetState();
-            if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W)) Position += new Vector2(0, -2);
-            if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S)) Position += new Vector2(0, 2);
+            if ((keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W)) && Position.Y > 0) Position += new Vector2(0, -2);
+            if ((keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S)) && Position.Y < 300) Position += new Vector2(0, 2);
             //bounds.X = Position.X - 32;
             bounds.Y = Position.Y - 16;
         }

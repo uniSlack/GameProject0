@@ -42,7 +42,7 @@ namespace GameProject0
             texture = content.Load<Texture2D>("WEAPON_arrow");
         }
 
-        public void Update(GameTime gameTime, Random r, int width)
+        public void Update(GameTime gameTime, Random r, int width, float speed)
         {
             movementTimer += gameTime.ElapsedGameTime.TotalSeconds;
 
@@ -50,7 +50,7 @@ namespace GameProject0
             {
                 if (Fired)
                 {
-                    Position += new Vector2(-1, 0) * 500 * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                    Position += new Vector2(-1, 0) * 500 * (float)gameTime.ElapsedGameTime.TotalSeconds * speed;
                     if (Position.X < -64) 
                     {
                         Fired = false;
