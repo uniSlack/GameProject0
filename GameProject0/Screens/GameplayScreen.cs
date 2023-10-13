@@ -5,6 +5,10 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using GameProject0.StateManagement;
+using System.Collections.Generic;
+using System.Threading.Tasks.Sources;
+using SharpDX.Direct2D1;
+using System.Reflection.Metadata;
 
 namespace GameProject0.Screens
 {
@@ -14,15 +18,24 @@ namespace GameProject0.Screens
     public class GameplayScreen : GameScreen
     {
         private ContentManager _content;
-        private SpriteFont _gameFont;
-
-        private Vector2 _playerPosition = new Vector2(100, 100);
-        private Vector2 _enemyPosition = new Vector2(100, 100);
-
-        private readonly Random _random = new Random();
+        private SpriteBatch spriteBatch;
 
         private float _pauseAlpha;
         private readonly InputAction _pauseAction;
+
+        private SpriteFont silkScreen;
+
+        private Texture2D castleBackground;
+        private Texture2D bronzeKnight;
+        private Texture2D darkRanger;
+
+        private ArrowSprite[] arrows;
+        private Shield shield;
+        private Random r;
+
+        private int score = 0;
+        private int health = 100;
+        private float arrowSpeed = 1;
 
         public GameplayScreen()
         {
@@ -40,17 +53,15 @@ namespace GameProject0.Screens
             if (_content == null)
                 _content = new ContentManager(ScreenManager.Game.Services, "Content");
 
-            _gameFont = _content.Load<SpriteFont>("gamefont");
+            spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // A real game would probably have more content than this sample, so
-            // it would take longer to load. We simulate that by delaying for a
-            // while, giving you a chance to admire the beautiful loading screen.
-            Thread.Sleep(1000);
+            castleBackground = Content.Load<Texture2D>("castle_backround");
+            silkScreen = Content.Load<SpriteFont>("SilkScreen");
+            bronzeKnight = Content.Load<Texture2D>("BronzeKnight");
+            darkRanger = Content.Load<Texture2D>("DarkRanger");
 
-            // once the load has finished, we use ResetElapsedTime to tell the game's
-            // timing mechanism that we have just finished a very long frame, and that
-            // it should not try to catch up.
-            ScreenManager.Game.ResetElapsedTime();
+            foreach (var arrow in arrows) arrow.LoadContent(Content);
+            shield.LoadContent(Content);
         }
 
 
@@ -69,31 +80,41 @@ namespace GameProject0.Screens
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
             base.Update(gameTime, otherScreenHasFocus, false);
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Exit();
 
-            // Gradually fade in or out depending on whether we are covered by the pause screen.
-            if (coveredByOtherScreen)
-                _pauseAlpha = Math.Min(_pauseAlpha + 1f / 32, 1);
-            else
-                _pauseAlpha = Math.Max(_pauseAlpha - 1f / 32, 0);
-
-            if (IsActive)
+            if (health <= 0)
             {
-                // Apply some random jitter to make the enemy move around.
-                const float randomization = 10;
-
-                _enemyPosition.X += (float)(_random.NextDouble() - 0.5) * randomization;
-                _enemyPosition.Y += (float)(_random.NextDouble() - 0.5) * randomization;
-
-                // Apply a stabilizing force to stop the enemy moving off the screen.
-                var targetPosition = new Vector2(
-                    ScreenManager.GraphicsDevice.Viewport.Width / 2 - _gameFont.MeasureString("Insert Gameplay Here").X / 2,
-                    200);
-
-                _enemyPosition = Vector2.Lerp(_enemyPosition, targetPosition, 0.05f);
-
-                // This game isn't very fun! You could probably improve
-                // it by inserting something more interesting in this space :-)
+                Exit();
+                System.Windows.Forms.DialogResult result = System.Windows.Forms.MessageBox.Show("Game Over!", $"Your health reached zero!\nScore: {score}");
+                //if (result == System.Windows.Forms.DialogResult.Yes)
             }
+
+            // TODO: Add your update logic here
+            foreach (var arrow in arrows)
+            {
+                arrow.Update(gameTime, r, GraphicsDevice.Viewport.Width, arrowSpeed);
+            }
+
+            foreach (var arrow in arrows)
+            {
+                if (arrow.Position.X < 0)
+                {
+                    health -= 10;
+                    arrow.Blocked();
+                }
+                if (arrow.Bounds.CollidesWith(shield.Bounds))
+                {
+                    score += 100;
+                    arrow.Blocked();
+                }
+            }
+
+            shield.Update(gameTime);
+
+            arrowSpeed += (float)gameTime.ElapsedGameTime.TotalSeconds / 500;
+
+            base.Update(gameTime);
         }
 
         // Unlike the Update method, this will only be called when the gameplay screen is active.
