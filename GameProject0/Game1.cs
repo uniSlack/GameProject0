@@ -25,7 +25,9 @@ namespace GameProject0
 
         private int score = 0;
         private int health = 100;
-        private float arrowSpeed = 1;
+        private float arrowSpeed = 2;
+
+        private SparksParticleSystem _sparks;
 
         public Game1()
         {
@@ -53,6 +55,9 @@ namespace GameProject0
             shield = new Shield(new Vector2(100,100));
 
             r = new Random();
+
+            _sparks = new SparksParticleSystem(this);
+            Components.Add(_sparks);
 
             base.Initialize();
         }
@@ -98,6 +103,7 @@ namespace GameProject0
                 if (arrow.Bounds.CollidesWith(shield.Bounds))
                 {
                     score += 100;
+                    _sparks.PlaceSparks( new Vector2(130, arrow.Position.Y+32));
                     arrow.Blocked();
                 }
             }
@@ -113,7 +119,7 @@ namespace GameProject0
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            spriteBatch.Begin();
+            spriteBatch.Begin(blendState: BlendState.AlphaBlend);
 
             spriteBatch.Draw(castleBackground, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
 
